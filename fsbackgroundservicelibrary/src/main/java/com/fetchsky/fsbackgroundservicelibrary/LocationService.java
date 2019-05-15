@@ -11,13 +11,14 @@ import android.os.IBinder;
 import android.support.annotation.Nullable;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
+import android.widget.Toast;
 
 public class LocationService extends Service {
     final Handler mHandler = new Handler();
     static final int JOB_ID = 247854; // Unique job ID.
     private static final String TAG = "TestGPS";
     private LocationManager mLocationManager = null;
-    private static final float LOCATION_DISTANCE = 5f;
+    private static final float LOCATION_DISTANCE = 0;
 
     public static final String LOCATION_BROADCAST = "LocationBroadcast";
     public static boolean serviceRunning = false;
@@ -47,7 +48,7 @@ public class LocationService extends Service {
         @Override
         public void onLocationChanged(Location location) {
             Log.i(TAG, "onLocationChanged: " + location);
-
+            Toast.makeText(getApplicationContext(), location.toString(), Toast.LENGTH_LONG);
             sendLocationMessage(location);
             mLastLocation.set(location);
         }
