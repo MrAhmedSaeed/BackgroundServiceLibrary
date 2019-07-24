@@ -1,39 +1,47 @@
 package com.fetchsky.fsbackgroundservicelibrary;
 
-import android.content.Context;
+import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.util.Log;
-import android.widget.Toast;
-
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.iid.InstanceIdResult;
 
-import static android.content.ContentValues.TAG;
 
-public class ToastMessage {
-    private static Context appContext;
+public class Notification {
+    Geofencing geofencing=new Geofencing();
+    private static final Notification ourInstance = new Notification();
 
-    public static void s(Context c, String message){
-        appContext=c;
+    public static Notification getInstance() {
+        return ourInstance;
+    }
 
-        Toast.makeText(c,message,Toast.LENGTH_SHORT).show();
+    private Notification() {
+    }
+
+    public static String getFCMToken(){
+
+        final String[] fcmToken = {null};
         FirebaseInstanceId.getInstance().getInstanceId()
                 .addOnCompleteListener(new OnCompleteListener<InstanceIdResult>() {
                     @Override
                     public void onComplete(@NonNull Task<InstanceIdResult> task) {
                         if (!task.isSuccessful()) {
-                            Log.w(TAG, "getInstanceId failed", task.getException());
+                            Log.i("TestGPS FCMFAILd", "getInstanceId failed", task.getException());
                             return;
                         }
 
-                        // Get new Instance ID token
-                        String token = task.getResult().getToken();
+                        fcmToken[0] = task.getResult().getToken();
 
-
-                        Toast.makeText(appContext, token, Toast.LENGTH_SHORT).show();
                     }
                 });
+        return fcmToken[0];
     }
+
+    public String getDeviceId(){
+        return Settings.Secure.getString(geofencing.getAppContext().getContentResolver(), Settings.Secure.ANDROID_ID);
+    }
+
+
 }
